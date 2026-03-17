@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "nuc-kube-prometheus-stack values",
+  "description": "Schema for nuc-kube-prometheus-stack Helm chart values.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nameOverride": {
+      "type": "string",
+      "description": "Override the chart name used in generated labels."
+    },
+    "commonLabels": {
+      "$ref": "#/definitions/stringMap",
+      "description": "Labels merged into every rendered resource."
+    },
+    "commonAnnotations": {
+      "$ref": "#/definitions/stringMap",
+      "description": "Annotations merged into every rendered resource."
+    },
+    "apiVersions": {
+      "type": "object",
+      "description": "Default API version overrides per supported Prometheus Operator kind.",
+      "additionalProperties": false,
+      "properties": {
+        "serviceMonitor": {
+          "$ref": "#/definitions/nonEmptyString"
+        },
+        "scrapeConfig": {
+          "$ref": "#/definitions/nonEmptyString"
+        },
+        "prometheusRule": {
+          "$ref": "#/definitions/nonEmptyString"
+        },
+        "probe": {
+          "$ref": "#/definitions/nonEmptyString"
+        },
+        "podMonitor": {
+          "$ref": "#/definitions/nonEmptyString"
+        }
+      }
+    },
+    "serviceMonitors": {
+      "$ref": "#/definitions/resourceList",
+      "description": "List of ServiceMonitor resources."
+    },
+    "scrapeConfigs": {
+      "$ref": "#/definitions/resourceList",
+      "description": "List of ScrapeConfig resources."
+    },
+    "prometheusRules": {
+      "$ref": "#/definitions/resourceList",
+      "description": "List of PrometheusRule resources."
+    },
+    "probes": {
+      "$ref": "#/definitions/resourceList",
+      "description": "List of Probe resources."
+    },
+    "podMonitors": {
+      "$ref": "#/definitions/resourceList",
+      "description": "List of PodMonitor resources."
+    }
+  },
+  "definitions": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringMap": {
+      "type": "object",
+      "default": {},
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "freeFormObject": {
+      "type": "object",
+      "description": "Arbitrary Prometheus Operator payload passed through by the chart.",
+      "additionalProperties": true
+    },
+    "resourceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/nonEmptyString",
+          "description": "Resource name."
+        },
+        "namespace": {
+          "$ref": "#/definitions/nonEmptyString",
+          "description": "Namespace for the resource. Defaults to the release namespace."
+        },
+        "labels": {
+          "$ref": "#/definitions/stringMap",
+          "description": "Resource-specific labels."
+        },
+        "annotations": {
+          "$ref": "#/definitions/stringMap",
+          "description": "Resource-specific annotations."
+        },
+        "apiVersion": {
+          "$ref": "#/definitions/nonEmptyString",
+          "description": "Per-resource API version override."
+        },
+        "spec": {
+          "$ref": "#/definitions/freeFormObject",
+          "description": "Resource spec rendered as-is."
+        },
+        "status": {
+          "$ref": "#/definitions/freeFormObject",
+          "description": "Optional resource status rendered as-is."
+        }
+      }
+    },
+    "resourceList": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/resourceItem"
+      }
+    }
+  }
+}

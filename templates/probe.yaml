@@ -1,0 +1,11 @@
+{{- range $index, $item := .Values.probes }}
+---
+{{ include "nuc-kube-prometheus-stack.renderResource" (dict
+  "root" $
+  "item" $item
+  "kind" "Probe"
+  "defaultApiVersion" $.Values.apiVersions.probe
+  "resourceKey" (printf "probes[%d]" $index)
+  "namespaced" true
+) }}
+{{- end }}

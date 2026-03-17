@@ -1,0 +1,45 @@
+# -- Override the default chart label name if needed.
+nameOverride: ""
+
+# -- Extra labels applied to every rendered resource.
+commonLabels: {}
+# -- Extra annotations applied to every rendered resource.
+commonAnnotations: {}
+
+# The defaults below are aligned with the Prometheus Operator CRDs bundled by
+# kube-prometheus-stack. Override them only if your cluster serves other versions.
+apiVersions:
+  # -- Default apiVersion for ServiceMonitor resources.
+  serviceMonitor: monitoring.coreos.com/v1
+  # -- Default apiVersion for ScrapeConfig resources.
+  scrapeConfig: monitoring.coreos.com/v1alpha1
+  # -- Default apiVersion for PrometheusRule resources.
+  prometheusRule: monitoring.coreos.com/v1
+  # -- Default apiVersion for Probe resources.
+  probe: monitoring.coreos.com/v1
+  # -- Default apiVersion for PodMonitor resources.
+  podMonitor: monitoring.coreos.com/v1
+
+# Each list item supports:
+# - name: required
+# - namespace: optional, defaults to the release namespace
+# - labels: optional
+# - annotations: optional
+# - apiVersion: optional override for a single resource
+# - spec: arbitrary resource spec
+# - status: optional raw status block for fixtures and synthetic manifests
+
+# -- ServiceMonitor resources to render.
+serviceMonitors: []
+
+# -- ScrapeConfig resources to render.
+scrapeConfigs: []
+
+# -- PrometheusRule resources to render.
+prometheusRules: []
+
+# -- Probe resources to render.
+probes: []
+
+# -- PodMonitor resources to render.
+podMonitors: []

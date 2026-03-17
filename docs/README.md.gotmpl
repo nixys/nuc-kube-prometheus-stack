@@ -75,21 +75,7 @@ The values contract is validated by [values.schema.json](values.schema.json).
 
 This section is generated from [values.yaml](values.yaml) by `helm-docs`. Edit [values.yaml](values.yaml) comments or [docs/README.md.gotmpl](docs/README.md.gotmpl), then run `pre-commit run helm-docs --all-files` or `make docs` if you need to refresh it outside a commit.
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| apiVersions.podMonitor | string | `"monitoring.coreos.com/v1"` | Default apiVersion for PodMonitor resources. |
-| apiVersions.probe | string | `"monitoring.coreos.com/v1"` | Default apiVersion for Probe resources. |
-| apiVersions.prometheusRule | string | `"monitoring.coreos.com/v1"` | Default apiVersion for PrometheusRule resources. |
-| apiVersions.scrapeConfig | string | `"monitoring.coreos.com/v1alpha1"` | Default apiVersion for ScrapeConfig resources. |
-| apiVersions.serviceMonitor | string | `"monitoring.coreos.com/v1"` | Default apiVersion for ServiceMonitor resources. |
-| commonAnnotations | object | `{}` | Extra annotations applied to every rendered resource. |
-| commonLabels | object | `{}` | Extra labels applied to every rendered resource. |
-| nameOverride | string | `""` | Override the default chart label name if needed. |
-| podMonitors | list | `[]` | PodMonitor resources to render. |
-| probes | list | `[]` | Probe resources to render. |
-| prometheusRules | list | `[]` | PrometheusRule resources to render. |
-| scrapeConfigs | list | `[]` | ScrapeConfig resources to render. |
-| serviceMonitors | list | `[]` | ServiceMonitor resources to render. |
+{{ template "chart.valuesTable" . }}
 
 ## Included Values Files
 

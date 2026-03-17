@@ -1,0 +1,11 @@
+{{- range $index, $item := .Values.scrapeConfigs }}
+---
+{{ include "nuc-kube-prometheus-stack.renderResource" (dict
+  "root" $
+  "item" $item
+  "kind" "ScrapeConfig"
+  "defaultApiVersion" $.Values.apiVersions.scrapeConfig
+  "resourceKey" (printf "scrapeConfigs[%d]" $index)
+  "namespaced" true
+) }}
+{{- end }}

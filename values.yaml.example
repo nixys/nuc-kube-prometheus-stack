@@ -1,0 +1,154 @@
+# Example values for all supported Prometheus Operator resources in this chart.
+# Render with:
+#   helm template nuc-kube-prometheus-stack . -f values.yaml.example
+
+# Override the generated chart name if needed.
+nameOverride: ""
+
+# Labels and annotations merged into every rendered resource.
+commonLabels:
+  stack: prometheus
+commonAnnotations:
+  team: observability
+
+# Optional API version overrides. The chart defaults already match these values.
+apiVersions:
+  serviceMonitor: monitoring.coreos.com/v1
+  scrapeConfig: monitoring.coreos.com/v1alpha1
+  prometheusRule: monitoring.coreos.com/v1
+  probe: monitoring.coreos.com/v1
+  podMonitor: monitoring.coreos.com/v1
+
+# ServiceMonitor examples for scraping Services discovered by labels.
+serviceMonitors:
+  - name: api-service-monitor
+    namespace: app-a
+    labels:
+      component: service-monitor
+    annotations:
+      note: metrics-service
+    spec:
+      jobLabel: app.kubernetes.io/name
+      namespaceSelector:
+        matchNames:
+          - app-a
+          - shared-monitoring
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: api
+          app.kubernetes.io/component: backend
+      endpoints:
+        - port: http-metrics
+          path: /metrics
+          interval: 30s
+          scrapeTimeout: 10s
+          scheme: http
+          honorLabels: true
+          relabelings:
+            - action: replace
+              sourceLabels:
+                - __meta_kubernetes_service_label_cluster
+              targetLabel: cluster
+          metricRelabelings:
+            - action: keep
+              sourceLabels:
+                - __name__
+              regex: http_requests_total
+
+# ScrapeConfig examples for static or external targets.
+scrapeConfigs:
+  - name: external-scrape-config
+    namespace: observability
+    labels:
+      component: scrape-config
+    annotations:
+      note: external-targets
+    spec:
+      jobName: external-services
+      metricsPath: /metrics
+      scheme: HTTP
+      scrapeInterval: 1m
+      scrapeTimeout: 15s
+      staticConfigs:
+        - labels:
+            env: prod
+            team: payments
+          targets:
+            - payments.example.com:8443
+            - ledger.example.com:8443
+
+# PrometheusRule examples for alerting and recording rules.
+prometheusRules:
+  - name: platform-rules
+    namespace: observability
+    labels:
+      component: rules
+    annotations:
+      note: alerts
+    spec:
+      groups:
+        - name: platform.availability
+          rules:
+            - alert: ApiErrorBudgetBurn
+              expr: 'sum(rate(http_requests_total{job="api",code=~"5.."}[5m])) > 0'
+              for: 10m
+              labels:
+                severity: warning
+                team: platform
+              annotations:
+                summary: API is returning 5xx responses
+                description: Investigate elevated error rate for the api job.
+            - record: job:http_requests:rate5m
+              expr: 'sum(rate(http_requests_total[5m])) by (job)'
+
+# Probe examples for blackbox-style probing via a prober exporter.
+probes:
+  - name: blackbox-http
+    namespace: observability
+    labels:
+      component: probe
+    annotations:
+      note: uptime
+    spec:
+      jobName: blackbox-http
+      interval: 30s
+      module: http_2xx
+      prober:
+        url: blackbox-exporter.observability.svc:19115
+        path: /probe
+        scheme: http
+      targets:
+        staticConfig:
+          labels:
+            env: prod
+          static:
+            - https://status.example.com/healthz
+            - https://api.example.com/readyz
+
+# PodMonitor examples for scraping metrics directly from selected Pods.
+podMonitors:
+  - name: worker-pod-monitor
+    namespace: jobs
+    labels:
+      component: pod-monitor
+    annotations:
+      note: batch
+    spec:
+      jobLabel: app.kubernetes.io/name
+      namespaceSelector:
+        matchNames:
+          - jobs
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: worker
+          app.kubernetes.io/component: metrics
+      podMetricsEndpoints:
+        - port: metrics
+          path: /metrics
+          interval: 30s
+          honorLabels: true
+          relabelings:
+            - action: replace
+              sourceLabels:
+                - __meta_kubernetes_pod_node_name
+              targetLabel: kubernetes_node

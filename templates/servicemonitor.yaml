@@ -1,0 +1,11 @@
+{{- range $index, $item := .Values.serviceMonitors }}
+---
+{{ include "nuc-kube-prometheus-stack.renderResource" (dict
+  "root" $
+  "item" $item
+  "kind" "ServiceMonitor"
+  "defaultApiVersion" $.Values.apiVersions.serviceMonitor
+  "resourceKey" (printf "serviceMonitors[%d]" $index)
+  "namespaced" true
+) }}
+{{- end }}

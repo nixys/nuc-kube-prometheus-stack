@@ -1,0 +1,150 @@
+suite: example resources
+templates:
+  - templates/servicemonitor.yaml
+  - templates/scrapeconfig.yaml
+  - templates/prometheusrule.yaml
+  - templates/probe.yaml
+  - templates/podmonitor.yaml
+release:
+  name: unit-test
+  namespace: unit-namespace
+
+tests:
+  - it: renders the expected document count per template
+    values:
+      - ../../values.yaml.example
+    asserts:
+      - hasDocuments:
+          count: 1
+        template: templates/servicemonitor.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/scrapeconfig.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/prometheusrule.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/probe.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/podmonitor.yaml
+
+  - it: renders the expected example manifests
+    values:
+      - ../../values.yaml.example
+    asserts:
+      - containsDocument:
+          kind: ServiceMonitor
+          apiVersion: monitoring.coreos.com/v1
+          name: api-service-monitor
+          namespace: app-a
+          any: true
+        template: templates/servicemonitor.yaml
+      - containsDocument:
+          kind: ScrapeConfig
+          apiVersion: monitoring.coreos.com/v1alpha1
+          name: external-scrape-config
+          namespace: observability
+          any: true
+        template: templates/scrapeconfig.yaml
+      - containsDocument:
+          kind: PrometheusRule
+          apiVersion: monitoring.coreos.com/v1
+          name: platform-rules
+          namespace: observability
+          any: true
+        template: templates/prometheusrule.yaml
+      - containsDocument:
+          kind: Probe
+          apiVersion: monitoring.coreos.com/v1
+          name: blackbox-http
+          namespace: observability
+          any: true
+        template: templates/probe.yaml
+      - containsDocument:
+          kind: PodMonitor
+          apiVersion: monitoring.coreos.com/v1
+          name: worker-pod-monitor
+          namespace: jobs
+          any: true
+        template: templates/podmonitor.yaml
+
+  - it: renders the ServiceMonitor example
+    values:
+      - ../../values.yaml.example
+    template: templates/servicemonitor.yaml
+    documentSelector:
+      path: metadata.name
+      value: api-service-monitor
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+      - equal:
+          path: metadata.namespace
+          value: app-a
+      - equal:
+          path: spec.endpoints[0].port
+          value: http-metrics
+
+  - it: renders the ScrapeConfig example
+    values:
+      - ../../values.yaml.example
+    template: templates/scrapeconfig.yaml
+    documentSelector:
+      path: metadata.name
+      value: external-scrape-config
+    asserts:
+      - isKind:
+          of: ScrapeConfig
+      - equal:
+          path: metadata.namespace
+          value: observability
+      - equal:
+          path: spec.staticConfigs[0].targets[1]
+          value: ledger.example.com:8443
+
+  - it: renders the PrometheusRule example
+    values:
+      - ../../values.yaml.example
+    template: templates/prometheusrule.yaml
+    documentSelector:
+      path: metadata.name
+      value: platform-rules
+    asserts:
+      - isKind:
+          of: PrometheusRule
+      - equal:
+          path: spec.groups[0].rules[0].alert
+          value: ApiErrorBudgetBurn
+
+  - it: renders the Probe example
+    values:
+      - ../../values.yaml.example
+    template: templates/probe.yaml
+    documentSelector:
+      path: metadata.name
+      value: blackbox-http
+    asserts:
+      - isKind:
+          of: Probe
+      - equal:
+          path: spec.targets.staticConfig.static[1]
+          value: https://api.example.com/readyz
+
+  - it: renders the PodMonitor example
+    values:
+      - ../../values.yaml.example
+    template: templates/podmonitor.yaml
+    documentSelector:
+      path: metadata.name
+      value: worker-pod-monitor
+    asserts:
+      - isKind:
+          of: PodMonitor
+      - equal:
+          path: metadata.namespace
+          value: jobs
+      - equal:
+          path: spec.podMetricsEndpoints[0].port
+          value: metrics
