@@ -88,6 +88,10 @@
         "name"
       ],
       "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to render this list item."
+        },
         "name": {
           "$ref": "#/definitions/nonEmptyString",
           "description": "Resource name."

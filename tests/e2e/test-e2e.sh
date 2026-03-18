@@ -23,6 +23,25 @@ log_error() { echo -e "${RED}Error:${RESET} $1" >&2; }
 log_info() { echo -e "$1"; }
 log_warn() { echo -e "${YELLOW}Warning:${RESET} $1" >&2; }
 
+wait_for_crd_established() {
+  local crd="$1"
+  local attempts="${2:-60}"
+  local delay_seconds="${3:-2}"
+  local attempt=1
+
+  while [ "${attempt}" -le "${attempts}" ]; do
+    if kubectl get "crd/${crd}" -o jsonpath='{.status.conditions[?(@.type=="Established")].status}' 2>/dev/null | grep -qx "True"; then
+      return 0
+    fi
+
+    sleep "${delay_seconds}"
+    attempt=$((attempt + 1))
+  done
+
+  log_error "CRD ${crd} did not reach Established within $((attempts * delay_seconds)) seconds"
+  return 1
+}
+
 show_help() {
   echo "Usage: $(basename "$0") [helm upgrade/install options]"
   echo ""
@@ -106,7 +125,7 @@ install_prometheus_operator_crds() {
     prometheusrules.monitoring.coreos.com \
     probes.monitoring.coreos.com \
     podmonitors.monitoring.coreos.com; do
-    kubectl wait --for=condition=Established --timeout=120s "crd/${crd}"
+    wait_for_crd_established "${crd}"
   done
 
   echo

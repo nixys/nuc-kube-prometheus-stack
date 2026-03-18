@@ -1,4 +1,9 @@
 {{- range $index, $item := .Values.prometheusRules }}
+{{- $enabled := true }}
+{{- if hasKey $item "enabled" }}
+{{- $enabled = $item.enabled }}
+{{- end }}
+{{- if $enabled }}
 ---
 {{ include "nuc-kube-prometheus-stack.renderResource" (dict
   "root" $
@@ -8,4 +13,5 @@
   "resourceKey" (printf "prometheusRules[%d]" $index)
   "namespaced" true
 ) }}
+{{- end }}
 {{- end }}

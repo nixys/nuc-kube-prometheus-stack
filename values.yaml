@@ -21,6 +21,7 @@ apiVersions:
   podMonitor: monitoring.coreos.com/v1
 
 # Each list item supports:
+# - enabled: optional, set false for documentation-only placeholders or staged activation
 # - name: required
 # - namespace: optional, defaults to the release namespace
 # - labels: optional
@@ -28,18 +29,101 @@ apiVersions:
 # - apiVersion: optional override for a single resource
 # - spec: arbitrary resource spec
 # - status: optional raw status block for fixtures and synthetic manifests
+#
+# The disabled placeholder items below exist so helm-docs can describe nested
+# fields for list entries without rendering resources by default.
 
 # -- ServiceMonitor resources to render.
-serviceMonitors: []
+serviceMonitors:
+  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+    enabled: false
+    # -- Resource name.
+    name: placeholder-service-monitor
+    # -- Namespace for the resource. Defaults to the release namespace when omitted.
+    namespace: monitoring
+    # -- Resource-specific labels merged on top of commonLabels and chart labels.
+    labels: {}
+    # -- Resource-specific annotations merged on top of commonAnnotations.
+    annotations: {}
+    # -- Optional per-resource apiVersion override.
+    apiVersion: monitoring.coreos.com/v1
+    # -- Raw resource spec rendered as-is.
+    spec: {}
+    # -- Optional raw resource status rendered as-is.
+    status: {}
 
 # -- ScrapeConfig resources to render.
-scrapeConfigs: []
+scrapeConfigs:
+  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+    enabled: false
+    # -- Resource name.
+    name: placeholder-scrape-config
+    # -- Namespace for the resource. Defaults to the release namespace when omitted.
+    namespace: monitoring
+    # -- Resource-specific labels merged on top of commonLabels and chart labels.
+    labels: {}
+    # -- Resource-specific annotations merged on top of commonAnnotations.
+    annotations: {}
+    # -- Optional per-resource apiVersion override.
+    apiVersion: monitoring.coreos.com/v1alpha1
+    # -- Raw resource spec rendered as-is.
+    spec: {}
+    # -- Optional raw resource status rendered as-is.
+    status: {}
 
 # -- PrometheusRule resources to render.
-prometheusRules: []
+prometheusRules:
+  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+    enabled: false
+    # -- Resource name.
+    name: placeholder-prometheus-rule
+    # -- Namespace for the resource. Defaults to the release namespace when omitted.
+    namespace: monitoring
+    # -- Resource-specific labels merged on top of commonLabels and chart labels.
+    labels: {}
+    # -- Resource-specific annotations merged on top of commonAnnotations.
+    annotations: {}
+    # -- Optional per-resource apiVersion override.
+    apiVersion: monitoring.coreos.com/v1
+    # -- Raw resource spec rendered as-is.
+    spec: {}
+    # -- Optional raw resource status rendered as-is.
+    status: {}
 
 # -- Probe resources to render.
-probes: []
+probes:
+  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+    enabled: false
+    # -- Resource name.
+    name: placeholder-probe
+    # -- Namespace for the resource. Defaults to the release namespace when omitted.
+    namespace: monitoring
+    # -- Resource-specific labels merged on top of commonLabels and chart labels.
+    labels: {}
+    # -- Resource-specific annotations merged on top of commonAnnotations.
+    annotations: {}
+    # -- Optional per-resource apiVersion override.
+    apiVersion: monitoring.coreos.com/v1
+    # -- Raw resource spec rendered as-is.
+    spec: {}
+    # -- Optional raw resource status rendered as-is.
+    status: {}
 
 # -- PodMonitor resources to render.
-podMonitors: []
+podMonitors:
+  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+    enabled: false
+    # -- Resource name.
+    name: placeholder-pod-monitor
+    # -- Namespace for the resource. Defaults to the release namespace when omitted.
+    namespace: monitoring
+    # -- Resource-specific labels merged on top of commonLabels and chart labels.
+    labels: {}
+    # -- Resource-specific annotations merged on top of commonAnnotations.
+    annotations: {}
+    # -- Optional per-resource apiVersion override.
+    apiVersion: monitoring.coreos.com/v1
+    # -- Raw resource spec rendered as-is.
+    spec: {}
+    # -- Optional raw resource status rendered as-is.
+    status: {}
