@@ -40,24 +40,24 @@
       }
     },
     "serviceMonitors": {
-      "$ref": "#/definitions/resourceList",
-      "description": "List of ServiceMonitor resources."
+      "$ref": "#/definitions/resourceMap",
+      "description": "Map of ServiceMonitor resources."
     },
     "scrapeConfigs": {
-      "$ref": "#/definitions/resourceList",
-      "description": "List of ScrapeConfig resources."
+      "$ref": "#/definitions/resourceMap",
+      "description": "Map of ScrapeConfig resources."
     },
     "prometheusRules": {
-      "$ref": "#/definitions/resourceList",
-      "description": "List of PrometheusRule resources."
+      "$ref": "#/definitions/resourceMap",
+      "description": "Map of PrometheusRule resources."
     },
     "probes": {
-      "$ref": "#/definitions/resourceList",
-      "description": "List of Probe resources."
+      "$ref": "#/definitions/resourceMap",
+      "description": "Map of Probe resources."
     },
     "podMonitors": {
-      "$ref": "#/definitions/resourceList",
-      "description": "List of PodMonitor resources."
+      "$ref": "#/definitions/resourceMap",
+      "description": "Map of PodMonitor resources."
     }
   },
   "definitions": {
@@ -90,7 +90,7 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Whether to render this list item."
+          "description": "Whether to render this map entry."
         },
         "name": {
           "$ref": "#/definitions/nonEmptyString",
@@ -122,10 +122,14 @@
         }
       }
     },
-    "resourceList": {
-      "type": "array",
-      "default": [],
-      "items": {
+    "resourceMap": {
+      "type": "object",
+      "default": {},
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
         "$ref": "#/definitions/resourceItem"
       }
     }

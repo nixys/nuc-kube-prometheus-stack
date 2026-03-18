@@ -13,7 +13,8 @@ apiVersions:
   prometheusRule: example.net/v1beta1
 
 serviceMonitors:
-  - name: merged-service-monitor
+  merged:
+    name: merged-service-monitor
     apiVersion: example.net/v1alpha1
     labels:
       component: service-monitor
@@ -28,7 +29,8 @@ serviceMonitors:
         - port: metrics
 
 prometheusRules:
-  - name: platform-rules
+  platform:
+    name: platform-rules
     namespace: ops-rules
     labels:
       component: rule

@@ -21,7 +21,8 @@ apiVersions:
 
 # ServiceMonitor examples for scraping Services discovered by labels.
 serviceMonitors:
-  - name: api-service-monitor
+  api:
+    name: api-service-monitor
     namespace: app-a
     labels:
       component: service-monitor
@@ -57,7 +58,8 @@ serviceMonitors:
 
 # ScrapeConfig examples for static or external targets.
 scrapeConfigs:
-  - name: external-scrape-config
+  external:
+    name: external-scrape-config
     namespace: observability
     labels:
       component: scrape-config
@@ -79,7 +81,8 @@ scrapeConfigs:
 
 # PrometheusRule examples for alerting and recording rules.
 prometheusRules:
-  - name: platform-rules
+  platform:
+    name: platform-rules
     namespace: observability
     labels:
       component: rules
@@ -103,7 +106,8 @@ prometheusRules:
 
 # Probe examples for blackbox-style probing via a prober exporter.
 probes:
-  - name: blackbox-http
+  blackbox:
+    name: blackbox-http
     namespace: observability
     labels:
       component: probe
@@ -127,7 +131,8 @@ probes:
 
 # PodMonitor examples for scraping metrics directly from selected Pods.
 podMonitors:
-  - name: worker-pod-monitor
+  worker:
+    name: worker-pod-monitor
     namespace: jobs
     labels:
       component: pod-monitor

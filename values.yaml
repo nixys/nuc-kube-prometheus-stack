@@ -20,7 +20,7 @@ apiVersions:
   # -- Default apiVersion for PodMonitor resources.
   podMonitor: monitoring.coreos.com/v1
 
-# Each list item supports:
+# Each resource map value supports:
 # - enabled: optional, set false for documentation-only placeholders or staged activation
 # - name: required
 # - namespace: optional, defaults to the release namespace
@@ -30,12 +30,14 @@ apiVersions:
 # - spec: arbitrary resource spec
 # - status: optional raw status block for fixtures and synthetic manifests
 #
-# The disabled placeholder items below exist so helm-docs can describe nested
-# fields for list entries without rendering resources by default.
+# The disabled placeholder entries below exist so helm-docs can describe nested
+# fields for resource maps without rendering resources by default.
 
-# -- ServiceMonitor resources to render.
+# -- ServiceMonitor resources to render, keyed by logical entry name.
 serviceMonitors:
-  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+  # -- Documentation-only placeholder entry. Replace `placeholder` with any logical key.
+  placeholder:
+    # -- Set to false to keep a map entry in values only for documentation or staged activation.
     enabled: false
     # -- Resource name.
     name: placeholder-service-monitor
@@ -52,9 +54,11 @@ serviceMonitors:
     # -- Optional raw resource status rendered as-is.
     status: {}
 
-# -- ScrapeConfig resources to render.
+# -- ScrapeConfig resources to render, keyed by logical entry name.
 scrapeConfigs:
-  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+  # -- Documentation-only placeholder entry. Replace `placeholder` with any logical key.
+  placeholder:
+    # -- Set to false to keep a map entry in values only for documentation or staged activation.
     enabled: false
     # -- Resource name.
     name: placeholder-scrape-config
@@ -71,9 +75,11 @@ scrapeConfigs:
     # -- Optional raw resource status rendered as-is.
     status: {}
 
-# -- PrometheusRule resources to render.
+# -- PrometheusRule resources to render, keyed by logical entry name.
 prometheusRules:
-  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+  # -- Documentation-only placeholder entry. Replace `placeholder` with any logical key.
+  placeholder:
+    # -- Set to false to keep a map entry in values only for documentation or staged activation.
     enabled: false
     # -- Resource name.
     name: placeholder-prometheus-rule
@@ -90,9 +96,11 @@ prometheusRules:
     # -- Optional raw resource status rendered as-is.
     status: {}
 
-# -- Probe resources to render.
+# -- Probe resources to render, keyed by logical entry name.
 probes:
-  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+  # -- Documentation-only placeholder entry. Replace `placeholder` with any logical key.
+  placeholder:
+    # -- Set to false to keep a map entry in values only for documentation or staged activation.
     enabled: false
     # -- Resource name.
     name: placeholder-probe
@@ -109,9 +117,11 @@ probes:
     # -- Optional raw resource status rendered as-is.
     status: {}
 
-# -- PodMonitor resources to render.
+# -- PodMonitor resources to render, keyed by logical entry name.
 podMonitors:
-  - # -- Set to false to keep a list item in values only for documentation or staged activation.
+  # -- Documentation-only placeholder entry. Replace `placeholder` with any logical key.
+  placeholder:
+    # -- Set to false to keep a map entry in values only for documentation or staged activation.
     enabled: false
     # -- Resource name.
     name: placeholder-pod-monitor

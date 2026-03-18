@@ -1,4 +1,6 @@
-{{- range $index, $item := .Values.scrapeConfigs }}
+{{- $items := .Values.scrapeConfigs | default dict }}
+{{- range $key := keys $items | sortAlpha }}
+{{- $item := index $items $key }}
 {{- $enabled := true }}
 {{- if hasKey $item "enabled" }}
 {{- $enabled = $item.enabled }}
@@ -10,7 +12,7 @@
   "item" $item
   "kind" "ScrapeConfig"
   "defaultApiVersion" $.Values.apiVersions.scrapeConfig
-  "resourceKey" (printf "scrapeConfigs[%d]" $index)
+  "resourceKey" (printf "scrapeConfigs.%s" $key)
   "namespaced" true
 ) }}
 {{- end }}

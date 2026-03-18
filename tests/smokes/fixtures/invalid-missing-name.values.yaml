@@ -1,5 +1,6 @@
 serviceMonitors:
-  - namespace: observability
+  invalid:
+    namespace: observability
     spec:
       selector:
         matchLabels:

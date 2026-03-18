@@ -1,4 +1,6 @@
-{{- range $index, $item := .Values.prometheusRules }}
+{{- $items := .Values.prometheusRules | default dict }}
+{{- range $key := keys $items | sortAlpha }}
+{{- $item := index $items $key }}
 {{- $enabled := true }}
 {{- if hasKey $item "enabled" }}
 {{- $enabled = $item.enabled }}
@@ -10,7 +12,7 @@
   "item" $item
   "kind" "PrometheusRule"
   "defaultApiVersion" $.Values.apiVersions.prometheusRule
-  "resourceKey" (printf "prometheusRules[%d]" $index)
+  "resourceKey" (printf "prometheusRules.%s" $key)
   "namespaced" true
 ) }}
 {{- end }}

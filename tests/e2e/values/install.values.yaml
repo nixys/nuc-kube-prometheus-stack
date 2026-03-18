@@ -12,7 +12,8 @@ apiVersions:
   podMonitor: monitoring.coreos.com/v1
 
 serviceMonitors:
-  - name: e2e-service-monitor
+  main:
+    name: e2e-service-monitor
     spec:
       namespaceSelector:
         matchNames:
@@ -26,7 +27,8 @@ serviceMonitors:
           interval: 30s
 
 scrapeConfigs:
-  - name: e2e-scrape-config
+  main:
+    name: e2e-scrape-config
     spec:
       jobName: e2e-static
       metricsPath: /metrics
@@ -39,7 +41,8 @@ scrapeConfigs:
             - e2e-target.example.com:9090
 
 prometheusRules:
-  - name: e2e-prometheus-rule
+  main:
+    name: e2e-prometheus-rule
     spec:
       groups:
         - name: e2e.rules
@@ -53,7 +56,8 @@ prometheusRules:
                 summary: E2E rule rendered successfully
 
 probes:
-  - name: e2e-probe
+  main:
+    name: e2e-probe
     spec:
       jobName: e2e-probe
       interval: 30s
@@ -70,7 +74,8 @@ probes:
             - https://example.com/healthz
 
 podMonitors:
-  - name: e2e-pod-monitor
+  main:
+    name: e2e-pod-monitor
     spec:
       namespaceSelector:
         matchNames:

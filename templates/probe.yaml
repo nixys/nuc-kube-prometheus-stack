@@ -1,4 +1,6 @@
-{{- range $index, $item := .Values.probes }}
+{{- $items := .Values.probes | default dict }}
+{{- range $key := keys $items | sortAlpha }}
+{{- $item := index $items $key }}
 {{- $enabled := true }}
 {{- if hasKey $item "enabled" }}
 {{- $enabled = $item.enabled }}
@@ -10,7 +12,7 @@
   "item" $item
   "kind" "Probe"
   "defaultApiVersion" $.Values.apiVersions.probe
-  "resourceKey" (printf "probes[%d]" $index)
+  "resourceKey" (printf "probes.%s" $key)
   "namespaced" true
 ) }}
 {{- end }}

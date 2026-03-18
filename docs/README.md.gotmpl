@@ -42,7 +42,7 @@ Support for individual fields still depends on the Prometheus Operator version a
 
 ## Values Model
 
-Each top-level list in [values.yaml](values.yaml) maps to one resource kind:
+Each top-level map in [values.yaml](values.yaml) maps to one resource kind:
 
 - `serviceMonitors`
 - `scrapeConfigs`
@@ -50,11 +50,11 @@ Each top-level list in [values.yaml](values.yaml) maps to one resource kind:
 - `probes`
 - `podMonitors`
 
-Every list item uses the same generic contract:
+Every map entry value uses the same generic contract:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `enabled` | no | Set to `false` to keep a list item in values only for documentation or staged activation. |
+| `enabled` | no | Set to `false` to keep a map entry in values only for documentation or staged activation. |
 | `name` | yes | Resource name. |
 | `namespace` | no | Namespace for the resource. Defaults to the Helm release namespace. |
 | `labels` | no | Labels merged on top of built-in chart labels and `commonLabels`. |
@@ -80,7 +80,7 @@ This section is generated from [values.yaml](values.yaml) by `helm-docs`. Edit [
 
 ## Included Values Files
 
-- [values.yaml](values.yaml): documentation-friendly defaults that still render no resources because placeholder items are disabled.
+- [values.yaml](values.yaml): documentation-friendly defaults that still render no resources because placeholder entries are disabled.
 - [values.yaml.example](values.yaml.example): complete example covering every supported resource type.
 
 Use [values.yaml.example](values.yaml.example) as a starting point and remove the sections you do not need.
