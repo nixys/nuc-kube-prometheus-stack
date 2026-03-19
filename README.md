@@ -1,93 +1,193 @@
 # NUC Kube Prometheus Stack
 
+Helm chart for rendering Prometheus Operator monitoring resources from declarative values.
 
+The chart does not install Prometheus, Alertmanager, or the full `kube-prometheus-stack`. It only renders Prometheus Operator CRD objects that are already supported by the target cluster. The local e2e flow bundles upstream CRDs under `tests/e2e/crds/` only to validate installability.
 
-## Getting started
+## Quick Start
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Render the example configuration:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.nixys.ru/apps/nuc-subcharts/nuc-kube-prometheus-stack.git
-git branch -M main
-git push -uf origin main
+```bash
+helm template nuc-kube-prometheus-stack . -f values.yaml.example
 ```
 
-## Integrate with your tools
+Install the chart:
 
-- [ ] [Set up project integrations](https://git.nixys.ru/apps/nuc-subcharts/nuc-kube-prometheus-stack/-/settings/integrations)
+```bash
+helm install nuc-kube-prometheus-stack . \
+  --namespace observability \
+  --create-namespace \
+  -f values.yaml.example
+```
 
-## Collaborate with your team
+Install the local README generator hook:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```bash
+pre-commit install
+pre-commit install-hooks
+```
 
-## Test and Deploy
+## Supported Resources
 
-Use the built-in continuous integration in GitLab.
+The chart can render these Prometheus Operator kinds:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- `ServiceMonitor`
+- `ScrapeConfig`
+- `PrometheusRule`
+- `Probe`
+- `PodMonitor`
 
-***
+Support for individual fields still depends on the Prometheus Operator version and CRDs installed in the cluster.
 
-# Editing this README
+## Values Model
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Each top-level map in [values.yaml](values.yaml) maps to one resource kind:
 
-## Suggestions for a good README
+- `serviceMonitors`
+- `scrapeConfigs`
+- `prometheusRules`
+- `probes`
+- `podMonitors`
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Every map entry value uses the same generic contract:
 
-## Name
-Choose a self-explaining name for your project.
+| Field | Required | Description |
+|-------|----------|-------------|
+| `enabled` | no | Set to `false` to keep a map entry in values only for documentation or staged activation. |
+| `name` | yes | Resource name. |
+| `namespace` | no | Namespace for the resource. Defaults to the Helm release namespace. |
+| `labels` | no | Labels merged on top of built-in chart labels and `commonLabels`. |
+| `annotations` | no | Annotations merged on top of `commonAnnotations`. |
+| `apiVersion` | no | Per-resource API version override. |
+| `spec` | no | Raw resource spec rendered as-is. |
+| `status` | no | Optional raw status block. Usually not managed through Helm in production. |
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Global controls:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- `nameOverride`
+- `commonLabels`
+- `commonAnnotations`
+- `apiVersions.*`
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+The values contract is validated by [values.schema.json](values.schema.json).
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Helm Values
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+This section is generated from [values.yaml](values.yaml) by `helm-docs`. Edit [values.yaml](values.yaml) comments or [docs/README.md.gotmpl](docs/README.md.gotmpl), then run `pre-commit run helm-docs --all-files` or `make docs` if you need to refresh it outside a commit.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| apiVersions.podMonitor | string | `"monitoring.coreos.com/v1"` | Default apiVersion for PodMonitor resources. |
+| apiVersions.probe | string | `"monitoring.coreos.com/v1"` | Default apiVersion for Probe resources. |
+| apiVersions.prometheusRule | string | `"monitoring.coreos.com/v1"` | Default apiVersion for PrometheusRule resources. |
+| apiVersions.scrapeConfig | string | `"monitoring.coreos.com/v1alpha1"` | Default apiVersion for ScrapeConfig resources. |
+| apiVersions.serviceMonitor | string | `"monitoring.coreos.com/v1"` | Default apiVersion for ServiceMonitor resources. |
+| commonAnnotations | object | `{}` | Extra annotations applied to every rendered resource. |
+| commonLabels | object | `{}` | Extra labels applied to every rendered resource. |
+| nameOverride | string | `""` | Override the default chart label name if needed. |
+| podMonitors | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-pod-monitor","namespace":"monitoring","spec":{},"status":{}}}` | PodMonitor resources to render, keyed by logical entry name. |
+| podMonitors.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-pod-monitor","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |
+| podMonitors.placeholder.annotations | object | `{}` | Resource-specific annotations merged on top of commonAnnotations. |
+| podMonitors.placeholder.apiVersion | string | `"monitoring.coreos.com/v1"` | Optional per-resource apiVersion override. |
+| podMonitors.placeholder.enabled | bool | `false` | Set to false to keep a map entry in values only for documentation or staged activation. |
+| podMonitors.placeholder.labels | object | `{}` | Resource-specific labels merged on top of commonLabels and chart labels. |
+| podMonitors.placeholder.name | string | `"placeholder-pod-monitor"` | Resource name. |
+| podMonitors.placeholder.namespace | string | `"monitoring"` | Namespace for the resource. Defaults to the release namespace when omitted. |
+| podMonitors.placeholder.spec | object | `{}` | Raw resource spec rendered as-is. |
+| podMonitors.placeholder.status | object | `{}` | Optional raw resource status rendered as-is. |
+| probes | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-probe","namespace":"monitoring","spec":{},"status":{}}}` | Probe resources to render, keyed by logical entry name. |
+| probes.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-probe","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |
+| probes.placeholder.annotations | object | `{}` | Resource-specific annotations merged on top of commonAnnotations. |
+| probes.placeholder.apiVersion | string | `"monitoring.coreos.com/v1"` | Optional per-resource apiVersion override. |
+| probes.placeholder.enabled | bool | `false` | Set to false to keep a map entry in values only for documentation or staged activation. |
+| probes.placeholder.labels | object | `{}` | Resource-specific labels merged on top of commonLabels and chart labels. |
+| probes.placeholder.name | string | `"placeholder-probe"` | Resource name. |
+| probes.placeholder.namespace | string | `"monitoring"` | Namespace for the resource. Defaults to the release namespace when omitted. |
+| probes.placeholder.spec | object | `{}` | Raw resource spec rendered as-is. |
+| probes.placeholder.status | object | `{}` | Optional raw resource status rendered as-is. |
+| prometheusRules | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-prometheus-rule","namespace":"monitoring","spec":{},"status":{}}}` | PrometheusRule resources to render, keyed by logical entry name. |
+| prometheusRules.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-prometheus-rule","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |
+| prometheusRules.placeholder.annotations | object | `{}` | Resource-specific annotations merged on top of commonAnnotations. |
+| prometheusRules.placeholder.apiVersion | string | `"monitoring.coreos.com/v1"` | Optional per-resource apiVersion override. |
+| prometheusRules.placeholder.enabled | bool | `false` | Set to false to keep a map entry in values only for documentation or staged activation. |
+| prometheusRules.placeholder.labels | object | `{}` | Resource-specific labels merged on top of commonLabels and chart labels. |
+| prometheusRules.placeholder.name | string | `"placeholder-prometheus-rule"` | Resource name. |
+| prometheusRules.placeholder.namespace | string | `"monitoring"` | Namespace for the resource. Defaults to the release namespace when omitted. |
+| prometheusRules.placeholder.spec | object | `{}` | Raw resource spec rendered as-is. |
+| prometheusRules.placeholder.status | object | `{}` | Optional raw resource status rendered as-is. |
+| scrapeConfigs | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1alpha1","enabled":false,"labels":{},"name":"placeholder-scrape-config","namespace":"monitoring","spec":{},"status":{}}}` | ScrapeConfig resources to render, keyed by logical entry name. |
+| scrapeConfigs.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1alpha1","enabled":false,"labels":{},"name":"placeholder-scrape-config","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |
+| scrapeConfigs.placeholder.annotations | object | `{}` | Resource-specific annotations merged on top of commonAnnotations. |
+| scrapeConfigs.placeholder.apiVersion | string | `"monitoring.coreos.com/v1alpha1"` | Optional per-resource apiVersion override. |
+| scrapeConfigs.placeholder.enabled | bool | `false` | Set to false to keep a map entry in values only for documentation or staged activation. |
+| scrapeConfigs.placeholder.labels | object | `{}` | Resource-specific labels merged on top of commonLabels and chart labels. |
+| scrapeConfigs.placeholder.name | string | `"placeholder-scrape-config"` | Resource name. |
+| scrapeConfigs.placeholder.namespace | string | `"monitoring"` | Namespace for the resource. Defaults to the release namespace when omitted. |
+| scrapeConfigs.placeholder.spec | object | `{}` | Raw resource spec rendered as-is. |
+| scrapeConfigs.placeholder.status | object | `{}` | Optional raw resource status rendered as-is. |
+| serviceMonitors | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-service-monitor","namespace":"monitoring","spec":{},"status":{}}}` | ServiceMonitor resources to render, keyed by logical entry name. |
+| serviceMonitors.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-service-monitor","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |
+| serviceMonitors.placeholder.annotations | object | `{}` | Resource-specific annotations merged on top of commonAnnotations. |
+| serviceMonitors.placeholder.apiVersion | string | `"monitoring.coreos.com/v1"` | Optional per-resource apiVersion override. |
+| serviceMonitors.placeholder.enabled | bool | `false` | Set to false to keep a map entry in values only for documentation or staged activation. |
+| serviceMonitors.placeholder.labels | object | `{}` | Resource-specific labels merged on top of commonLabels and chart labels. |
+| serviceMonitors.placeholder.name | string | `"placeholder-service-monitor"` | Resource name. |
+| serviceMonitors.placeholder.namespace | string | `"monitoring"` | Namespace for the resource. Defaults to the release namespace when omitted. |
+| serviceMonitors.placeholder.spec | object | `{}` | Raw resource spec rendered as-is. |
+| serviceMonitors.placeholder.status | object | `{}` | Optional raw resource status rendered as-is. |
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Included Values Files
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+- [values.yaml](values.yaml): documentation-friendly defaults that still render no resources because placeholder entries are disabled.
+- [values.yaml.example](values.yaml.example): complete example covering every supported resource type.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Use [values.yaml.example](values.yaml.example) as a starting point and remove the sections you do not need.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Testing
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+The repository uses three test layers:
 
-## License
-For open source projects, say how it is licensed.
+- `tests/units/` for `helm-unittest` suites and backward compatibility checks
+- `tests/e2e/` for local kind-based Helm install checks against bundled Prometheus Operator CRDs
+- `tests/smokes/` for render and schema smoke scenarios
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Representative local commands:
+
+```bash
+helm lint . -f values.yaml.example
+helm template nuc-kube-prometheus-stack . -f values.yaml.example
+helm unittest -f 'tests/units/*_test.yaml' .
+sh tests/units/backward_compatibility_test.sh
+python3 tests/smokes/run/smoke.py --scenario example-render
+make test-e2e
+```
+
+Detailed test documentation is available in [docs/TESTS.MD](docs/TESTS.MD).
+
+Local setup instructions for the development and test toolchain are available in [docs/DEPENDENCY.md](docs/DEPENDENCY.md).
+
+The `e2e` layer is intentionally kept out of GitLab CI and is expected to be run locally through [Makefile](Makefile) or directly via `tests/e2e/test-e2e.sh`.
+
+## Notes
+
+- Keep the chart API versions aligned with the Prometheus Operator CRDs installed in the cluster.
+- `ScrapeConfig` is rendered as `monitoring.coreos.com/v1alpha1` by default in upstream CRDs.
+- Prefer managing `spec` through Helm and let controllers own `status`.
+
+## Repository Layout
+
+| Path | Purpose |
+|------|---------|
+| [Chart.yaml](Chart.yaml) | Chart metadata. |
+| [values.yaml](values.yaml) | Minimal default values and `helm-docs` source comments. |
+| [docs/README.md.gotmpl](docs/README.md.gotmpl) | Template used by `helm-docs` to build `README.md`. |
+| [.pre-commit-config.yaml](.pre-commit-config.yaml) | Local hooks, including automatic `helm-docs` generation on commit. |
+| [values.yaml.example](values.yaml.example) | Full example configuration. |
+| [values.schema.json](values.schema.json) | JSON schema for chart values. |
+| [templates/](templates) | One template per supported Prometheus Operator kind plus shared helpers. |
+| [tests/units/](tests/units) | Compact Helm unit suites and backward compatibility checks. |
+| [tests/e2e/](tests/e2e) | kind-based end-to-end installation checks with bundled CRDs. |
+| [tests/smokes/](tests/smokes) | Smoke scenarios for render and schema validation. |
+| [docs/DEPENDENCY.md](docs/DEPENDENCY.md) | Local dependency installation guide for development and tests. |
+| [docs/TESTS.MD](docs/TESTS.MD) | Detailed testing documentation. |

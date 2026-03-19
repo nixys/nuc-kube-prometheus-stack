@@ -1,0 +1,44 @@
+nameOverride: monitoring-platform
+
+commonLabels:
+  stack: observability
+  component: shared
+  tier: common
+
+commonAnnotations:
+  team: platform
+  note: common
+
+apiVersions:
+  prometheusRule: example.net/v1beta1
+
+serviceMonitors:
+  merged:
+    name: merged-service-monitor
+    apiVersion: example.net/v1alpha1
+    labels:
+      component: service-monitor
+      tier: edge
+    annotations:
+      note: external
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: api
+      endpoints:
+        - port: metrics
+
+prometheusRules:
+  platform:
+    name: platform-rules
+    namespace: ops-rules
+    labels:
+      component: rule
+    annotations:
+      note: alerts
+    spec:
+      groups:
+        - name: platform.recording
+          rules:
+            - record: up:sum
+              expr: sum(up)

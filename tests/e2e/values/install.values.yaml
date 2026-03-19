@@ -1,0 +1,89 @@
+commonLabels:
+  test-suite: e2e
+
+commonAnnotations:
+  test-suite: e2e
+
+apiVersions:
+  serviceMonitor: monitoring.coreos.com/v1
+  scrapeConfig: monitoring.coreos.com/v1alpha1
+  prometheusRule: monitoring.coreos.com/v1
+  probe: monitoring.coreos.com/v1
+  podMonitor: monitoring.coreos.com/v1
+
+serviceMonitors:
+  main:
+    name: e2e-service-monitor
+    spec:
+      namespaceSelector:
+        matchNames:
+          - nuc-kube-prometheus-stack-e2e
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: e2e-api
+      endpoints:
+        - port: metrics
+          path: /metrics
+          interval: 30s
+
+scrapeConfigs:
+  main:
+    name: e2e-scrape-config
+    spec:
+      jobName: e2e-static
+      metricsPath: /metrics
+      scheme: HTTP
+      scrapeInterval: 1m
+      staticConfigs:
+        - labels:
+            env: e2e
+          targets:
+            - e2e-target.example.com:9090
+
+prometheusRules:
+  main:
+    name: e2e-prometheus-rule
+    spec:
+      groups:
+        - name: e2e.rules
+          rules:
+            - alert: E2ETargetAlwaysUp
+              expr: vector(1)
+              for: 1m
+              labels:
+                severity: info
+              annotations:
+                summary: E2E rule rendered successfully
+
+probes:
+  main:
+    name: e2e-probe
+    spec:
+      jobName: e2e-probe
+      interval: 30s
+      module: http_2xx
+      prober:
+        url: blackbox-exporter.monitoring.svc:19115
+        path: /probe
+        scheme: http
+      targets:
+        staticConfig:
+          labels:
+            env: e2e
+          static:
+            - https://example.com/healthz
+
+podMonitors:
+  main:
+    name: e2e-pod-monitor
+    spec:
+      namespaceSelector:
+        matchNames:
+          - nuc-kube-prometheus-stack-e2e
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: e2e-worker
+      podMetricsEndpoints:
+        - port: metrics
+          path: /metrics
+          interval: 30s

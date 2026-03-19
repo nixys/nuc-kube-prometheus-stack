@@ -1,0 +1,19 @@
+{{- $items := .Values.scrapeConfigs | default dict }}
+{{- range $key := keys $items | sortAlpha }}
+{{- $item := index $items $key }}
+{{- $enabled := true }}
+{{- if hasKey $item "enabled" }}
+{{- $enabled = $item.enabled }}
+{{- end }}
+{{- if $enabled }}
+---
+{{ include "nuc-kube-prometheus-stack.renderResource" (dict
+  "root" $
+  "item" $item
+  "kind" "ScrapeConfig"
+  "defaultApiVersion" $.Values.apiVersions.scrapeConfig
+  "resourceKey" (printf "scrapeConfigs.%s" $key)
+  "namespaced" true
+) }}
+{{- end }}
+{{- end }}

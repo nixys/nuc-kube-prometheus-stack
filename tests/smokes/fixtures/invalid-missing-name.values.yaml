@@ -1,0 +1,9 @@
+serviceMonitors:
+  invalid:
+    namespace: observability
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: api
+      endpoints:
+        - port: metrics
