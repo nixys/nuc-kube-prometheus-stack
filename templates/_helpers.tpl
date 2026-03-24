@@ -42,3 +42,20 @@ status:
 {{ toYaml . | nindent 2 }}
 {{- end }}
 {{- end -}}
+
+{{- define "nuc-kube-prometheus-stack.renderResourceCollection" -}}
+{{- $root := .root -}}
+{{- $items := .items | default dict -}}
+{{- $resourceKey := .resourceKey -}}
+{{- $defaultApiVersion := .defaultApiVersion -}}
+{{- $kind := .kind -}}
+{{- $namespaced := .namespaced -}}
+{{- $documents := list -}}
+{{- range $key := keys $items | sortAlpha -}}
+{{- $item := index $items $key -}}
+{{- if and (kindIs "map" $item) (or (not (hasKey $item "enabled")) $item.enabled) -}}
+{{- $documents = append $documents (include "nuc-kube-prometheus-stack.renderResource" (dict "root" $root "item" $item "kind" $kind "defaultApiVersion" $defaultApiVersion "resourceKey" (printf "%s[%q]" $resourceKey $key) "namespaced" $namespaced)) -}}
+{{- end -}}
+{{- end -}}
+{{- join "\n---\n" $documents -}}
+{{- end -}}

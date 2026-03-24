@@ -2,6 +2,12 @@
 # Render with:
 #   helm template nuc-kube-prometheus-stack . -f values.yaml.example
 
+# Enable chart rendering when this chart is used as a dependency.
+enabled: true
+
+# Accepted for umbrella-chart compatibility; ignored by this chart.
+global: {}
+
 # Override the generated chart name if needed.
 nameOverride: ""
 

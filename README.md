@@ -63,12 +63,16 @@ Every map entry value uses the same generic contract:
 | `spec` | no | Raw resource spec rendered as-is. |
 | `status` | no | Optional raw status block. Usually not managed through Helm in production. |
 
+In a higher-precedence values file, set a map entry to `null` to suppress a default resource from a lower-precedence values file.
+
 Global controls:
 
+- `enabled`
 - `nameOverride`
 - `commonLabels`
 - `commonAnnotations`
 - `apiVersions.*`
+- `global` (accepted for umbrella-chart compatibility and ignored by templates)
 
 The values contract is validated by [values.schema.json](values.schema.json).
 
@@ -85,6 +89,8 @@ This section is generated from [values.yaml](values.yaml) by `helm-docs`. Edit [
 | apiVersions.serviceMonitor | string | `"monitoring.coreos.com/v1"` | Default apiVersion for ServiceMonitor resources. |
 | commonAnnotations | object | `{}` | Extra annotations applied to every rendered resource. |
 | commonLabels | object | `{}` | Extra labels applied to every rendered resource. |
+| enabled | bool | `true` | Enable nuc-kube-prometheus-stack chart rendering. |
+| global | object | `{}` | Compatibility values inherited from umbrella charts. Accepted but ignored by this chart. |
 | nameOverride | string | `""` | Override the default chart label name if needed. |
 | podMonitors | object | `{"placeholder":{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-pod-monitor","namespace":"monitoring","spec":{},"status":{}}}` | PodMonitor resources to render, keyed by logical entry name. |
 | podMonitors.placeholder | object | `{"annotations":{},"apiVersion":"monitoring.coreos.com/v1","enabled":false,"labels":{},"name":"placeholder-pod-monitor","namespace":"monitoring","spec":{},"status":{}}` | Documentation-only placeholder entry. Replace `placeholder` with any logical key. |

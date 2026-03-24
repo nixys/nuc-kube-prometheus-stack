@@ -1,0 +1,32 @@
+suite: null override contract
+templates:
+  - templates/servicemonitor.yaml
+  - templates/podmonitor.yaml
+release:
+  name: unit-test
+  namespace: unit-namespace
+
+tests:
+  - it: skips a default ServiceMonitor when a later values file overrides it to null
+    values:
+      - ../../values.yaml.example
+      - values/null_override.values.yaml
+    template: templates/servicemonitor.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: keeps unrelated resources when one default entry is overridden to null
+    values:
+      - ../../values.yaml.example
+      - values/null_override.values.yaml
+    template: templates/podmonitor.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          kind: PodMonitor
+          apiVersion: monitoring.coreos.com/v1
+          name: worker-pod-monitor
+          namespace: jobs
+          any: true

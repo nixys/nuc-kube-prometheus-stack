@@ -32,6 +32,10 @@ class SmokeContext:
     def invalid_missing_name_values(self) -> Path:
         return self.repo_root / "tests" / "smokes" / "fixtures" / "invalid-missing-name.values.yaml"
 
+    @property
+    def null_override_values(self) -> Path:
+        return self.repo_root / "tests" / "smokes" / "fixtures" / "null-override.values.yaml"
+
 
 def check_default_empty(context: SmokeContext) -> None:
     helm.lint(context.chart_dir, workdir=context.workdir)
@@ -122,6 +126,37 @@ def check_rendering_contract(context: SmokeContext) -> None:
     render.assert_path(prometheus_rule, "spec.groups[0].rules[0].record", "up:sum")
 
 
+def check_null_override(context: SmokeContext) -> None:
+    values_files = [context.example_values, context.null_override_values]
+    helm.lint(
+        context.chart_dir,
+        values_files=values_files,
+        workdir=context.workdir,
+    )
+    output_path = context.render_dir / "null-override.yaml"
+    helm.template(
+        context.chart_dir,
+        release_name=context.release_name,
+        namespace=context.namespace,
+        values_files=values_files,
+        output_path=output_path,
+        workdir=context.workdir,
+    )
+
+    documents = render.load_documents(output_path)
+    render.assert_doc_count(documents, 4)
+    render.assert_kinds(
+        documents,
+        {
+            "ScrapeConfig",
+            "PrometheusRule",
+            "Probe",
+            "PodMonitor",
+        },
+    )
+    render.select_document(documents, kind="PodMonitor", name="worker-pod-monitor")
+
+
 def check_example_render(context: SmokeContext) -> None:
     helm.lint(
         context.chart_dir,
@@ -208,6 +243,7 @@ SCENARIOS: list[tuple[str, Callable[[SmokeContext], None]]] = [
     ("default-empty", check_default_empty),
     ("schema-invalid-missing-name", check_schema_invalid_missing_name),
     ("rendering-contract", check_rendering_contract),
+    ("null-override", check_null_override),
     ("example-render", check_example_render),
     ("example-kubeconform", check_example_kubeconform),
 ]
