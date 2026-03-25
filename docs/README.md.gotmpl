@@ -6,10 +6,12 @@ The chart does not install Prometheus, Alertmanager, or the full `kube-prometheu
 
 ## Quick Start
 
-Render the example configuration:
+Add the Nixys chart repository:
 
 ```bash
-helm template nuc-kube-prometheus-stack . -f values.yaml.example
+helm repo add nixys https://registry.nixys.io/chartrepo/public
+# or
+helm repo add nixys https://registry.nixys.ru/chartrepo/public
 ```
 
 Install the chart:
