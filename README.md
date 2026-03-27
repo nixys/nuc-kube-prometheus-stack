@@ -1,5 +1,7 @@
 # NUC Kube Prometheus Stack
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/nuc-kube-prometheus-stack)](https://artifacthub.io/packages/search?repo=nuc-kube-prometheus-stack)
+
 Helm chart for rendering Prometheus Operator monitoring resources from declarative values.
 
 The chart does not install Prometheus, Alertmanager, or the full `kube-prometheus-stack`. It only renders Prometheus Operator CRD objects that are already supported by the target cluster. The local e2e flow bundles upstream CRDs under `tests/e2e/crds/` only to validate installability.
