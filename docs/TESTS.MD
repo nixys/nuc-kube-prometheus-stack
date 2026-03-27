@@ -60,7 +60,9 @@ tests/smokes/
 ├── helpers/
 │   └── argparser.py
 ├── fixtures/
+│   ├── invalid-list-contract.values.yaml
 │   ├── invalid-missing-name.values.yaml
+│   ├── null-override.values.yaml
 │   └── rendering-contract.values.yaml
 ├── run/
 │   └── smoke.py
@@ -80,20 +82,26 @@ tests/smokes/
 1. `default-empty`
    Verifies that the chart renders no manifests with default values.
 
-2. `schema-invalid-missing-name`
+2. `schema-invalid-list-contract`
+   Verifies that `values.schema.json` rejects the legacy list-based values contract now that resource collections are maps.
+
+3. `schema-invalid-missing-name`
    Verifies that `values.schema.json` is active and rejects a resource item without `name`.
 
-3. `rendering-contract`
+4. `rendering-contract`
    Verifies chart-owned behavior rather than CRD payload content:
    - `nameOverride`
    - merged labels and annotations
    - namespace fallback for namespaced resources
    - global and per-resource `apiVersion` override behavior
 
-4. `example-render`
+5. `null-override`
+   Verifies that a resource map entry can be explicitly nulled out by an overlay values file without breaking render output for the remaining resources.
+
+6. `example-render`
    Renders `values.yaml.example` and verifies that all supported resource kinds are produced from the example configuration.
 
-5. `example-kubeconform`
+7. `example-kubeconform`
    Renders `values.yaml.example` and validates the result with `kubeconform` using the same Prometheus Operator CRD schema location as CI.
 
 ## Smoke Prerequisites
@@ -214,7 +222,7 @@ Use this sequence when changing chart logic:
 helm lint . -f values.yaml.example
 helm template smoke . -f values.yaml.example >/dev/null
 helm unittest -f 'tests/units/*_test.yaml' .
-python3 tests/smokes/run/smoke.py --scenario default-empty --scenario schema-invalid-missing-name --scenario rendering-contract --scenario example-render
+python3 tests/smokes/run/smoke.py --scenario default-empty --scenario schema-invalid-list-contract --scenario schema-invalid-missing-name --scenario rendering-contract --scenario null-override --scenario example-render
 sh tests/units/backward_compatibility_test.sh
 bash tests/e2e/test-e2e.sh
 ```

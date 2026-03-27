@@ -41,6 +41,7 @@ test-smoke: ## Run all smoke scenarios; append SMOKE_ARGS='--scenario example-re
 test-smoke-fast: ## Run smoke scenarios except kubeconform-dependent validation
 	python3 tests/smokes/run/smoke.py \
 		--scenario default-empty \
+		--scenario schema-invalid-list-contract \
 		--scenario schema-invalid-missing-name \
 		--scenario rendering-contract \
 		--scenario null-override \

@@ -11,6 +11,7 @@ DEFAULT_SCHEMA_LOCATION = (
 SCENARIO_CHOICES = [
     "all",
     "default-empty",
+    "schema-invalid-list-contract",
     "schema-invalid-missing-name",
     "rendering-contract",
     "null-override",
