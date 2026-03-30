@@ -11,18 +11,15 @@ The chart does not install Prometheus, Alertmanager, or the full `kube-prometheu
 Add the Nixys chart repository:
 
 ```bash
-helm repo add nixys https://registry.nixys.io/chartrepo/public
-# or
-helm repo add nixys https://registry.nixys.ru/chartrepo/public
+helm repo add nixys https://registry.nixys.io/nuc
 ```
 
 Install the chart:
 
 ```bash
-helm install nuc-kube-prometheus-stack . \
-  --namespace observability \
-  --create-namespace \
-  -f values.yaml.example
+helm install nuc-kube-prometheus-stack nixys/nuc-kube-prometheus-stack \
+  --namespace nuc-kube-prometheus-stack \
+  --create-namespace
 ```
 
 Install the local README generator hook:
